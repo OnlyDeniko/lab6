@@ -14,12 +14,12 @@ protected:
 	int Width;
 	int Rating;
 public:
-	TBase(TypeFigure _type = _Point, std::string _name = "", bool _visible = true,
-			int _color = 100, int _r = 1, int _width = 100, int _rating = 1) :
+	TBase(TypeFigure _type = _Point, std::string _name = "", int _r = 7, bool _visible = true,
+			int _color = 0, int _width = 15, int _rating = 1) :
 				Figure(_type), Name(_name), Visible(_visible), Color(_color), R(_r), 
 					Width(_width), Rating(_rating) {};
-	~TBase() {};
-	std::string GetType() const;
+	virtual ~TBase() {};
+	TypeFigure GetType() const;
 	bool GetVisability() const;
 	int GetWidth() const;
 	int GetRating() const;

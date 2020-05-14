@@ -5,20 +5,24 @@
 
 class TLine : public TBase {
 protected:
-	TPoint *left;
-	TPoint *right;
+	TBase *left;
+	TBase *right;
 public:
-	TLine(TPoint *_left, TPoint *_right, std::string _name, bool _vis = true, 
-		int _color = 0, int _r = 5, int _width = 4, int _rating = 1) :
-		TBase(_Line, _name, _vis, _color, _r, _width, _rating), left(_left), right(_right){};
+	TLine(TPoint *_left, TPoint *_right) : TBase(_Line, _left->GetName() + ' ' + _right->GetName(), 7) {
+		left = _left;
+		right = _right;
+	}
+	TLine(const TLine & tmp);
+	
+	TLine &operator= (const TLine & tmp);
 	~TLine() {
 		delete left;
 		delete right;
 	}
 	void SetLeft(TPoint* tmp);
 	void SetRight(TPoint* tmp);
-	TPoint* GetLeft() const;
-	TPoint* GetRight() const;
+	TBase* GetLeft() const;
+	TBase* GetRight() const;
 	void Inverse();
 	void Draw(System::Drawing::Graphics^ g) override;
 	void IncRating() override;

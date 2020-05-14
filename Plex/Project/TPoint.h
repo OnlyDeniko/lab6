@@ -5,8 +5,8 @@ class TPoint : public TBase{
 protected:
 	int X, Y;
 public:
-	TPoint(int _x, int _y, std::string _name, bool _visible = 1, int _color = 0, int _r = 10, int _width = 5, int _rating = 1) :
-		TBase(_Point, _name, _visible, _color, _r, _width, _rating), X(_x), Y(_y) {};
+	TPoint(int _x, int _y, std::string _name, int _r = 15) :
+		TBase(_Point, _name, _r), X(_x), Y(_y) {};
 	~TPoint() {};
 	TPoint(const TPoint & Copy);
 	TPoint &operator=(const TPoint & Copy);

@@ -1,16 +1,7 @@
 #include "TBase.h"
 
-std::string TBase::GetType() const {
-	if (Figure == _Point) {
-		return "Point";
-	}
-	if (Figure == _Line) {
-		return "Line";
-	}
-	if (Figure == _Rectangle) {
-		return "Rectangle";
-	}
-	return "Curve";
+TypeFigure TBase::GetType() const {
+	return Figure;
 }
 
 bool TBase::GetVisability() const {

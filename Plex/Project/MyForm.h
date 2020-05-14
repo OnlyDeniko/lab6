@@ -447,8 +447,8 @@ namespace Project {
 			GridLines->Columns[2]->HeaderCell->Value = "Y";
 			for (int i = 0; i < Lines.size(); i++) {
 				GridLines->Rows[i]->Cells[0]->Value = msclr::interop::marshal_as<String^>(Lines[i]->GetName());
-				GridLines->Rows[i]->Cells[1]->Value = System::Convert::ToString(Lines[i]->GetLeft()->GetX());
-				GridLines->Rows[i]->Cells[2]->Value = System::Convert::ToString(Lines[i]->GetLeft()->GetY());
+				GridLines->Rows[i]->Cells[1]->Value = System::Convert::ToString(((TPoint*)(Lines[i]->GetLeft()))->GetX());
+				GridLines->Rows[i]->Cells[2]->Value = System::Convert::ToString(((TPoint*)(Lines[i]->GetLeft()))->GetY());
 			}
 		}
 
@@ -462,7 +462,7 @@ namespace Project {
 				return;
 			}
 			std::string NameLine = Name1 + ' ' + Name2;
-			Lines.push_back(new TLine(Dots[ind1], Dots[ind2], NameLine));
+			Lines.push_back(new TLine(Dots[ind1], Dots[ind2]));
 			DrawLines();
 			PrintLinesDataGrid();
 		}
