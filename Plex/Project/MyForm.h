@@ -4,7 +4,7 @@
 #include"TLine.h"
 #include<vector>
 #include <msclr\marshal_cppstd.h>
-
+#include"Plex.h"
 
 namespace Project {
 
@@ -20,6 +20,7 @@ namespace Project {
 	/// </summary>
 	std::vector<TPoint*> Dots;
 	std::vector<TLine*> Lines;
+	Plex *flex;
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
 	public:
@@ -68,6 +69,8 @@ namespace Project {
 	private: System::Windows::Forms::DataGridView^  GridLines;
 	private: System::Windows::Forms::TextBox^  TextBoxNameDot;
 	private: System::Windows::Forms::Label^  LabelCurrentDotName;
+	private: System::Windows::Forms::Button^  AddPlexButton;
+	private: System::Windows::Forms::Button^  DrawPlexButton;
 
 
 
@@ -109,6 +112,8 @@ namespace Project {
 			this->GridLines = (gcnew System::Windows::Forms::DataGridView());
 			this->TextBoxNameDot = (gcnew System::Windows::Forms::TextBox());
 			this->LabelCurrentDotName = (gcnew System::Windows::Forms::Label());
+			this->AddPlexButton = (gcnew System::Windows::Forms::Button());
+			this->DrawPlexButton = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->GridDots))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->GridLines))->BeginInit();
@@ -266,7 +271,7 @@ namespace Project {
 			this->GridLines->RowHeadersVisible = false;
 			this->GridLines->RowHeadersWidthSizeMode = System::Windows::Forms::DataGridViewRowHeadersWidthSizeMode::AutoSizeToAllHeaders;
 			this->GridLines->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
-			this->GridLines->Size = System::Drawing::Size(162, 266);
+			this->GridLines->Size = System::Drawing::Size(252, 266);
 			this->GridLines->TabIndex = 16;
 			// 
 			// TextBoxNameDot
@@ -285,12 +290,34 @@ namespace Project {
 			this->LabelCurrentDotName->TabIndex = 18;
 			this->LabelCurrentDotName->Text = L"Current Dot Name";
 			// 
+			// AddPlexButton
+			// 
+			this->AddPlexButton->Location = System::Drawing::Point(1307, 284);
+			this->AddPlexButton->Name = L"AddPlexButton";
+			this->AddPlexButton->Size = System::Drawing::Size(99, 30);
+			this->AddPlexButton->TabIndex = 19;
+			this->AddPlexButton->Text = L"Добавить плекс";
+			this->AddPlexButton->UseVisualStyleBackColor = true;
+			this->AddPlexButton->Click += gcnew System::EventHandler(this, &MyForm::AddPlexButton_Click);
+			// 
+			// DrawPlexButton
+			// 
+			this->DrawPlexButton->Location = System::Drawing::Point(1307, 320);
+			this->DrawPlexButton->Name = L"DrawPlexButton";
+			this->DrawPlexButton->Size = System::Drawing::Size(137, 30);
+			this->DrawPlexButton->TabIndex = 20;
+			this->DrawPlexButton->Text = L"Нарисовать по плексу";
+			this->DrawPlexButton->UseVisualStyleBackColor = true;
+			this->DrawPlexButton->Click += gcnew System::EventHandler(this, &MyForm::DrawPlexButton_Click);
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::ActiveCaption;
 			this->ClientSize = System::Drawing::Size(1456, 632);
+			this->Controls->Add(this->DrawPlexButton);
+			this->Controls->Add(this->AddPlexButton);
 			this->Controls->Add(this->LabelCurrentDotName);
 			this->Controls->Add(this->TextBoxNameDot);
 			this->Controls->Add(this->GridLines);
@@ -407,22 +434,32 @@ namespace Project {
 				return;
 			}
 			
+			if (flex) {
+				TPoint* find = flex->SearchPoint(NamePointToMove);
+
+				if (find) {
+					find->MovePoint(dx, dy);
+				}
+				flex->saveFile();
+				flex->saveGraph();
+			}
 			Dots[index]->MovePoint(dx, dy);
-			PrintDotsDataGrid();
-			PrintLinesDataGrid();
+			if (Dots.size()) PrintDotsDataGrid();
+			if (Lines.size()) PrintLinesDataGrid();
 			
 			ClearPictureBox();
 
 			DrawLines();
 			DrawDots();
+			
 		}
 	
 		void DrawDots() {
 			for (int i = 0; i < Dots.size(); i++) {
 				delete g;
 				g = Graphics::FromImage(Image);
-				Dots[i]->Draw(g);
 				picture->Image = Image;
+				Dots[i]->Draw(g);
 				picture->Refresh();
 				picture->Invalidate();
 			}
@@ -432,8 +469,8 @@ namespace Project {
 			for (int i = 0; i < Lines.size(); i++) {
 				delete g;
 				g = Graphics::FromImage(Image);
-				Lines[i]->Draw(g);
 				picture->Image = Image;
+				Lines[i]->Draw(g);
 				picture->Refresh();
 				picture->Invalidate();
 			}
@@ -441,14 +478,18 @@ namespace Project {
 
 		void PrintLinesDataGrid() {
 			GridLines->RowCount = Lines.size();
-			GridLines->ColumnCount = 3;
+			GridLines->ColumnCount = 5;
 			GridLines->Columns[0]->HeaderCell->Value = "Name";
-			GridLines->Columns[1]->HeaderCell->Value = "X";
-			GridLines->Columns[2]->HeaderCell->Value = "Y";
+			GridLines->Columns[1]->HeaderCell->Value = "X1";
+			GridLines->Columns[2]->HeaderCell->Value = "Y1";
+			GridLines->Columns[3]->HeaderCell->Value = "X2";
+			GridLines->Columns[4]->HeaderCell->Value = "Y2";
 			for (int i = 0; i < Lines.size(); i++) {
 				GridLines->Rows[i]->Cells[0]->Value = msclr::interop::marshal_as<String^>(Lines[i]->GetName());
 				GridLines->Rows[i]->Cells[1]->Value = System::Convert::ToString(((TPoint*)(Lines[i]->GetLeft()))->GetX());
 				GridLines->Rows[i]->Cells[2]->Value = System::Convert::ToString(((TPoint*)(Lines[i]->GetLeft()))->GetY());
+				GridLines->Rows[i]->Cells[3]->Value = System::Convert::ToString(((TPoint*)(Lines[i]->GetRight()))->GetX());
+				GridLines->Rows[i]->Cells[4]->Value = System::Convert::ToString(((TPoint*)(Lines[i]->GetRight()))->GetY());
 			}
 		}
 
@@ -465,6 +506,27 @@ namespace Project {
 			Lines.push_back(new TLine(Dots[ind1], Dots[ind2]));
 			DrawLines();
 			PrintLinesDataGrid();
+		}
+		System::Void AddPlexButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			if (!Lines.size()) return;
+			
+			flex = new Plex(Lines[0]);
+			for (int i = 1; i < Lines.size(); i++) {
+				flex->addLine(Lines[i]);
+			}
+			flex->saveFile();
+			flex->saveGraph();
+			PrintLinesDataGrid();
+		}
+		System::Void DrawPlexButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			if (flex->Empty()) return;
+			ClearPictureBox();
+			delete g;
+			g = Graphics::FromImage(Image);
+			picture->Image = Image;
+			flex->Draw(g);
+			picture->Refresh();
+			picture->Invalidate();
 		}
 };
 }

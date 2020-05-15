@@ -1,15 +1,8 @@
 #include "TPoint.h"
 
-TPoint::TPoint(const TPoint & Copy) {
+TPoint::TPoint(const TPoint & Copy):TBase(_Point, Copy.GetName(), Copy.R, Copy.Visible) {
 	X = Copy.X;
 	Y = Copy.Y;
-	Figure = Copy.Figure;
-	Name = Copy.Name;
-	Visible = Copy.Visible;
-	Color = Copy.Color;
-	R = Copy.R;
-	Width = Copy.Width;
-	Rating = Copy.Rating;
 }
 
 TPoint & TPoint::operator=(const TPoint & Copy) {
@@ -71,7 +64,9 @@ bool TPoint::IsFigure(int _x, int _y) {
 
 std::string TPoint::to_string() {
 	std::string ans;
-	ans += "X = " + std::to_string(X);
-	ans += "Y = " + std::to_string(Y);
+	ans += GetName() + "(";
+	ans += std::to_string(GetX()) + ' ' + std::to_string(GetY()) + ")";
+	//ans += "X = " + std::to_string(X);
+	//ans += " Y = " + std::to_string(Y);
 	return ans;
 }

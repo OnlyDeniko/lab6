@@ -1,8 +1,18 @@
 #include "TLine.h"
 
 TLine::TLine(const TLine & tmp) : TBase(_Line, tmp.left->GetName() + ' ' + tmp.right->GetName(), 7) {
-	left = tmp.left;
-	right = tmp.right;
+	
+	if (tmp.left->GetType() == _Point) {
+		left = new TPoint(*((TPoint*)tmp.left));
+	} else {
+		left = new TLine(*((TLine*)tmp.left));
+	}
+	if (tmp.right->GetType() == _Point) {
+		right = new TPoint(*((TPoint*)tmp.right));
+	}
+	else {
+		right = new TLine(*((TLine*)tmp.right));
+	}
 	Figure = tmp.Figure;
 	Name = tmp.Name;
 	Visible = tmp.Visible;
@@ -16,8 +26,18 @@ TLine & TLine::operator=(const TLine & tmp) {
 	if (this == &tmp) return *this;
 	if (left) delete left;
 	if (right) delete right;
-	left = tmp.left;
-	right = tmp.right;
+	if (tmp.left->GetType() == _Point) {
+		left = new TPoint(*((TPoint*)tmp.left));
+	}
+	else {
+		left = new TLine(*((TLine*)tmp.left));
+	}
+	if (tmp.right->GetType() == _Point) {
+		right = new TPoint(*((TPoint*)tmp.right));
+	}
+	else {
+		right = new TLine(*((TLine*)tmp.right));
+	}
 	Figure = tmp.Figure;
 	Name = tmp.Name;
 	Visible = tmp.Visible;
@@ -28,19 +48,19 @@ TLine & TLine::operator=(const TLine & tmp) {
 	return *this;
 }
 
-void TLine::SetLeft(TPoint * tmp) {
+void TLine::SetLeft(TBase * tmp) {
 	left = tmp;
 }
 
-void TLine::SetRight(TPoint * tmp) {
+void TLine::SetRight(TBase * tmp) {
 	right = tmp;
 }
 
-TBase * TLine::GetLeft() const {
+TBase * TLine::GetLeft() {
 	return left;
 }
 
-TBase * TLine::GetRight() const {
+TBase * TLine::GetRight() {
 	return right;
 }
 
@@ -74,6 +94,7 @@ void TLine::Draw(System::Drawing::Graphics ^ g) {
 
 void TLine::IncRating() {
 	Rating++;
+	if (Rating == 4) Rating = 1;
 }
 
 bool TLine::IsFigure(int _x, int _y) {
@@ -81,10 +102,36 @@ bool TLine::IsFigure(int _x, int _y) {
 	//пока не знаю
 }
 
+void TLine::MovePoint(int dx, int dy) {
+	if (left->GetType() == _Point) {
+		((TPoint*)left)->MovePoint(dx, dy);
+	}
+	else {
+		((TLine*)left)->MovePoint(dx, dy);
+	}
+	if (right->GetType() == _Point) {
+		((TPoint*)right)->MovePoint(dx, dy);
+	}
+	else {
+		((TLine*)right)->MovePoint(dx, dy);
+	}
+}
+
 std::string TLine::to_string() {
 	std::string ans;
-	ans += left->to_string();
+	ans += "LINE | ";
+	ans += GetName();
+	/*if (left->GetType() == _Point) {
+		ans += ((TPoint*)left)->to_string();
+	} else {
+		ans += ((TLine*)left)->to_string();
+	}
 	ans += ' ';
-	ans += right->to_string();
+	if (right->GetType() == _Point) {
+		ans += ((TPoint*)right)->to_string();
+	}
+	else {
+		ans += ((TLine*)right)->to_string();
+	}*/
 	return ans;
 }

@@ -27,6 +27,9 @@
     <ClCompile Include="TLine.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Plex.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyForm.h">
@@ -41,10 +44,24 @@
     <ClInclude Include="TLine.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Plex.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MyForm.resx">
       <Filter>Файлы ресурсов</Filter>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Errors.txt">
+      <Filter>Исходные файлы</Filter>
+    </Text>
+    <Text Include="outputGraph.txt">
+      <Filter>Исходные файлы</Filter>
+    </Text>
+    <Text Include="outputFile.txt">
+      <Filter>Исходные файлы</Filter>
+    </Text>
   </ItemGroup>
 </Project>

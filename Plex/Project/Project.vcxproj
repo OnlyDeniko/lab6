@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyForm.cpp" />
+    <ClCompile Include="Plex.cpp" />
     <ClCompile Include="TBase.cpp" />
     <ClCompile Include="TLine.cpp" />
     <ClCompile Include="TPoint.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="MyForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="Plex.h" />
     <ClInclude Include="TBase.h" />
     <ClInclude Include="TLine.h" />
     <ClInclude Include="TPoint.h" />
@@ -156,6 +158,11 @@
     <EmbeddedResource Include="MyForm.resx">
       <DependentUpon>MyForm.h</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Errors.txt" />
+    <Text Include="outputFile.txt" />
+    <Text Include="outputGraph.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -19,14 +19,15 @@ public:
 		delete left;
 		delete right;
 	}
-	void SetLeft(TPoint* tmp);
-	void SetRight(TPoint* tmp);
-	TBase* GetLeft() const;
-	TBase* GetRight() const;
+	void SetLeft(TBase* tmp);
+	void SetRight(TBase* tmp);
+	TBase* GetLeft();
+	TBase* GetRight();
 	void Inverse();
 	void Draw(System::Drawing::Graphics^ g) override;
 	void IncRating() override;
 	bool IsFigure(int _x, int _y) override;
+	void MovePoint(int dx, int dy);
 	std::string to_string() override;
 };
 

@@ -19,6 +19,7 @@ public:
 				Figure(_type), Name(_name), Visible(_visible), Color(_color), R(_r), 
 					Width(_width), Rating(_rating) {};
 	virtual ~TBase() {};
+	TBase(const TBase & tmp);
 	TypeFigure GetType() const;
 	bool GetVisability() const;
 	int GetWidth() const;

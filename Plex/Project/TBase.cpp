@@ -1,5 +1,15 @@
 #include "TBase.h"
 
+TBase::TBase(const TBase & tmp) {
+	Figure = tmp.Figure;
+	Name = tmp.Name;
+	Visible = tmp.Visible;
+	Color = tmp.Color;
+	R = tmp.R;
+	Width = tmp.Width;
+	Rating = tmp.Rating;
+}
+
 TypeFigure TBase::GetType() const {
 	return Figure;
 }
