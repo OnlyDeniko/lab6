@@ -8,7 +8,15 @@ protected:
 	TBase *left;
 	TBase *right;
 public:
+	TLine() {
+		left = nullptr;
+		right = nullptr;
+	}
 	TLine(TPoint *_left, TPoint *_right) : TBase(_Line, _left->GetName() + ' ' + _right->GetName(), 7) {
+		left = _left;
+		right = _right;
+	}
+	TLine(TBase* _left, TBase* _right, std::string name) : TBase(_Line, name, 7){
 		left = _left;
 		right = _right;
 	}

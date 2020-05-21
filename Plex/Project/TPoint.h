@@ -17,6 +17,10 @@ public:
 	void DecRating();
 	void IncRating() override;
 	bool IsFigure(int _x, int _y) override;
+	bool operator< (const TPoint &a) const {
+		if (X == a.X) return Y < a.Y;
+		return X < a.X;
+	}
 	std::string to_string() override;
 };
 

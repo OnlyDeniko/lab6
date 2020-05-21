@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Errors.txt" />
+    <Text Include="inputFile.txt" />
     <Text Include="outputFile.txt" />
     <Text Include="outputGraph.txt" />
   </ItemGroup>

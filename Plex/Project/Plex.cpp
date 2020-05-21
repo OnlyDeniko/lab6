@@ -1,10 +1,15 @@
 #include "Plex.h"
 #include<fstream>
-
+#include<iostream>
+#include<sstream>
 #include<vector>
+#include<stack>
+#include<cassert>
+#include<set>
 
 Plex::Plex(TLine * tmp) {
-	start = new TLine(*tmp);
+	if (tmp == nullptr) start = new TLine();
+	else start = new TLine(*tmp);
 }
 
 void dfsCopy(TBase* start, TBase* x) {
@@ -79,6 +84,9 @@ void Plex::addLine(TLine * tm) {
 			tmp->GetRight()->IncRating();
 		}
 
+	}
+	else {
+		assert(0);
 	}
 	err.close();
 }
@@ -206,6 +214,20 @@ TPoint * Plex::SearchPoint(int x, int y) {
 	return nullptr;
 }
 
+void dfsReColor(TBase* x, int c) {
+	if (x->GetType() == _Point) {
+		x->SetColor(c);
+		return;
+	}
+	x->SetColor(c);
+	dfsReColor(((TLine*)x)->GetLeft(), c);
+	dfsReColor(((TLine*)x)->GetRight(), c);
+}
+
+void Plex::reColor(int c) {
+	dfsReColor(start, c);
+}
+
 void Plex::Move(int dx, int dy) {
 	if (start == nullptr) return;
 	if (start->GetType() == _Point) {
@@ -225,7 +247,8 @@ void Plex::Draw(System::Drawing::Graphics ^ g) {
 }
 
 bool Plex::Empty() const {
-	return (start ? true : false);
+	if (start == nullptr) return true;
+	return false;
 }
 
 void increase_width(std::vector<std::string> & ans, int x) {
@@ -281,14 +304,14 @@ void dfsForSaveFile(TBase* x, std::fstream & out) {
 		return;
 	}
 	if (((TLine*)(x))->GetLeft() != nullptr) {
-		out << "GO LEFT\n";
+		//out << "GO LEFT\n";
 		dfsForSaveFile(((TLine*)(x))->GetLeft(), out);
-		out << "OUT LEFT\n";
+		//out << "OUT LEFT\n";
 	}
 	if (((TLine*)(x))->GetRight() != nullptr) {
-		out << "GO RIGHT\n";
+		//out << "GO RIGHT\n";
 		dfsForSaveFile(((TLine*)(x))->GetRight(), out);
-		out << "OUT RIGHT\n";
+		//out << "OUT RIGHT\n";
 	}
 	out << ((TLine*)(x))->to_string() << '\n';
 }
@@ -298,4 +321,119 @@ void Plex::saveFile() {
 	out.open("outputFile.txt", std::ios::out);
 	dfsForSaveFile(start, out);
 	out.close();
+}
+
+void Plex::readFile(const std::string & fileName) {
+	std::ifstream in;
+	in.open("inputFile.txt");
+	std::string s;
+	std::stack<TBase*> st;
+	
+	while (getline(in, s)) {
+		
+		std::stringstream buf;
+		buf << s;
+		std::string type;
+		buf >> type;
+		try {
+			if (type == "LINE:") {
+				if (st.size() < 2) {
+					throw BadSizeStack();
+				}
+				std::string nameLeft, nameRight;
+				buf >> nameLeft >> nameRight;
+				TBase* ri = st.top();
+				st.pop();
+				TBase* le = st.top();
+				st.pop();
+				//std::cout << "WAS: !" << le->GetName() << "!" << ri->GetName() << "!\n";
+				std::stringstream parser;
+				parser << le->GetName();
+				std::string newName;
+				std::string fullName;
+				parser >> newName;
+				fullName += newName;
+				parser.clear();
+				std::stringstream parser1;
+				parser1 << ri->GetName();
+				newName.clear();
+				parser1 >> newName;
+				fullName += ' ' + newName;
+				parser1.clear();
+				//std::cout << le->GetName() << '\n' << ri->GetName() << '\n';
+				/*if (ri->GetName() != nameRight || le->GetName() != nameLeft) {
+					std::cout << le->GetName() << ' ' << ri->GetName() << '\n';
+					std::cout << nameLeft << ' ' << nameRight << '\n';
+					throw BadNamePoints();
+				}*/
+				TLine* qwe = new TLine(le, ri, fullName);
+				std::cout << qwe->GetName() << '\n';
+				st.push((TBase*)qwe);
+			}
+			else if (type == "POINT:") {
+				std::string name;
+				int x, y;
+				buf >> name >> x >> y;
+				//std::cout << "!" << name << "!\n";
+				TPoint* p = new TPoint(x, y, name);
+				st.push((TBase*)p);
+			}
+			else throw BadTypeString();
+		}
+		catch (Plex::BadTypeString) {
+			std::cout << "Bad format of type in input string!\n";
+			return;
+		}
+		catch (Plex::BadSizeStack) {
+			std::cout << "Bad format of input string: stack empty!\n";
+			return;
+		}
+		catch (Plex::BadNamePoints) {
+			std::cout << "Bad format of input string: names of points not match!\n";
+			return;
+		}
+	}
+	
+	try {
+		if (st.size() != 1) {
+			throw BadSizeStack();
+		}
+		start = (TBase*)st.top();
+		st.pop();
+	}
+	catch (Plex::BadSizeStack) {
+		std::cout << "Bad format of input string: stack empty!\n";
+		return;
+	}
+	if (!start) assert(0);
+	in.close();
+}
+
+TPoint* dfsGetPointsAndLines(TBase* x, std::vector<TPoint*> &p, std::vector<TLine*> &l) {
+	if (x->GetType() == _Point) {
+		p.push_back(new TPoint(*(TPoint*)x));
+		return (TPoint*)x;
+	} else if (x->GetType() == _Line) {
+		TPoint* le = dfsGetPointsAndLines(((TLine*)x)->GetLeft(), p, l);
+		TPoint* ri = dfsGetPointsAndLines(((TLine*)x)->GetRight(), p, l);
+		l.push_back(new TLine(le, ri));
+		return le;
+	}
+}
+
+std::pair<std::vector<TPoint*>, std::vector<TLine*>> Plex::getPointsAndLines() {
+	std::vector<TPoint*> p;
+	std::vector<TLine*> l;
+	dfsGetPointsAndLines(start, p, l);
+	reverse(l.begin(), l.end());
+	std::set<std::string> was;
+	std::vector<TPoint*> pp;
+	for (auto i : p) {
+		if (was.find(i->GetName()) == was.end()) {
+			pp.push_back(i);
+			was.insert(i->GetName());
+		}
+	}
+	std::pair<std::vector<TPoint*>, std::vector<TLine*> > ans = { pp, l };
+	return ans;
 }

@@ -76,20 +76,34 @@ void TLine::Inverse() {
 	Name = newName;
 }
 
+TBase* dfsDraw(TBase* x, System::Drawing::Graphics ^ g, System::Drawing::Pen^ pen, System::Drawing::SolidBrush^ brush) {
+	if (x->GetType() == _Point) {
+		g->FillEllipse(brush, ((TPoint*)x)->GetX(), ((TPoint*)x)->GetY(), ((TPoint*)x)->GetWidth(), ((TPoint*)x)->GetWidth());
+		return x;
+	}
+	
+	TBase* le = dfsDraw(((TLine*)x)->GetLeft(), g, pen, brush);
+	TBase* ri = dfsDraw(((TLine*)x)->GetRight(), g, pen, brush);
+	g->DrawLine(pen, ((TPoint*)le)->GetX() + ((TPoint*)le)->GetWidth() / 2, ((TPoint*)le)->GetY() + ((TPoint*)le)->GetWidth() / 2,
+		((TPoint*)ri)->GetX() + ((TPoint*)ri)->GetWidth() / 2, ((TPoint*)ri)->GetY() + ((TPoint*)ri)->GetWidth() / 2);
+	return le;
+	
+}
+
 void TLine::Draw(System::Drawing::Graphics ^ g) {
 	if (!Visible) return;
 	int red, green, blue;
 	int tmp = Color;
-	blue = tmp % 256;
-	tmp /= 256;
-	green = tmp % 256;
-	tmp /= 256;
-	red = tmp;
+	
 	System::Drawing::Pen^ pen = gcnew System::Drawing::Pen(
-		System::Drawing::Color::FromArgb(255, red, green, blue));
+		System::Drawing::Color::FromArgb(tmp));
+	System::Drawing::SolidBrush^ brush = gcnew System::Drawing::SolidBrush(
+		System::Drawing::Color::FromArgb(tmp));
 	pen->Width = R;
-	g->DrawLine(pen, ((TPoint*)left)->GetX() + ((TPoint*)left)->GetWidth() / 2, ((TPoint*)left)->GetY() + ((TPoint*)left)->GetWidth() / 2, 
-		((TPoint*)right)->GetX() + ((TPoint*)right)->GetWidth() / 2, ((TPoint*)right)->GetY() + ((TPoint*)right)->GetWidth() / 2);
+	TBase* le = dfsDraw(left, g, pen, brush);
+	TBase* ri = dfsDraw(right, g, pen, brush);
+	g->DrawLine(pen, ((TPoint*)le)->GetX() + ((TPoint*)le)->GetWidth() / 2, ((TPoint*)le)->GetY() + ((TPoint*)le)->GetWidth() / 2, 
+		((TPoint*)ri)->GetX() + ((TPoint*)ri)->GetWidth() / 2, ((TPoint*)ri)->GetY() + ((TPoint*)ri)->GetWidth() / 2);
 }
 
 void TLine::IncRating() {
@@ -119,7 +133,7 @@ void TLine::MovePoint(int dx, int dy) {
 
 std::string TLine::to_string() {
 	std::string ans;
-	ans += "LINE | ";
+	ans += "LINE: ";
 	ans += GetName();
 	/*if (left->GetType() == _Point) {
 		ans += ((TPoint*)left)->to_string();

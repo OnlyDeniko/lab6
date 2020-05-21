@@ -63,5 +63,8 @@
     <Text Include="outputFile.txt">
       <Filter>Исходные файлы</Filter>
     </Text>
+    <Text Include="inputFile.txt">
+      <Filter>Исходные файлы</Filter>
+    </Text>
   </ItemGroup>
 </Project>

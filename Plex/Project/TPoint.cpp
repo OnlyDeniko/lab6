@@ -36,13 +36,8 @@ void TPoint::Draw(System::Drawing::Graphics ^ g) {
 	if (Visible == false) return;
 	int red, green, blue;
 	int tmp = Color;
-	blue = tmp % 256;
-	tmp /= 256;
-	green = tmp % 256;
-	tmp /= 256;
-	red = tmp;
 	System::Drawing::SolidBrush^ brush = gcnew System::Drawing::SolidBrush(
-		System::Drawing::Color::FromArgb(255, red, green, blue));
+		System::Drawing::Color::FromArgb(tmp));
 	g->FillEllipse(brush, X, Y, Width, Width);
 }
 
@@ -64,8 +59,9 @@ bool TPoint::IsFigure(int _x, int _y) {
 
 std::string TPoint::to_string() {
 	std::string ans;
-	ans += GetName() + "(";
-	ans += std::to_string(GetX()) + ' ' + std::to_string(GetY()) + ")";
+	ans += "POINT: ";
+	ans += GetName() + ' ';
+	ans += std::to_string(GetX()) + ' ' + std::to_string(GetY());
 	//ans += "X = " + std::to_string(X);
 	//ans += " Y = " + std::to_string(Y);
 	return ans;

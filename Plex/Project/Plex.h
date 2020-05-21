@@ -3,10 +3,14 @@
 #include"TLine.h"
 #include"TBase.h"
 #include"TLine.h"
+#include<vector>
 
 class Plex {
 private:
 	TBase* start;
+	class BadTypeString {};
+	class BadSizeStack {};
+	class BadNamePoints {};
 public:
 	Plex(TLine* tmp = nullptr);
 	Plex(const Plex & tmp);
@@ -23,10 +27,13 @@ public:
 	TPoint* SearchPoint(const std::string & name);
 	TPoint* SearchPoint(int x, int y);
 
+	void reColor(int c);
 	void Move(int dx, int dy);
 	void Draw(System::Drawing::Graphics^ g);
 	bool Empty()const;
 	void saveGraph();
 	void saveFile();
+	void readFile(const std::string &fileName);
+	std::pair < std::vector<TPoint*>, std::vector<TLine*> > getPointsAndLines();
 };
 

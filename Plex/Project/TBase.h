@@ -27,6 +27,9 @@ public:
 	std::string GetName() const;
 	int GetColor() const;
 	void SetColor(int _c);
+	void SetName(const std::string & s) {
+		Name = s;
+	}
 	void SetWidth(int _width);
 	void SetVisability(bool _vis);
 	virtual void IncRating() = 0;

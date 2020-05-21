@@ -3,6 +3,9 @@
 #include"TPoint.h"
 #include"TLine.h"
 #include<vector>
+#include<set>
+#include<queue>
+#include<iostream>
 #include <msclr\marshal_cppstd.h>
 #include"Plex.h"
 
@@ -20,7 +23,9 @@ namespace Project {
 	/// </summary>
 	std::vector<TPoint*> Dots;
 	std::vector<TLine*> Lines;
-	Plex *flex;
+	Plex *flex = nullptr;
+	
+	std::set<TPoint> setik;
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
 	public:
@@ -71,6 +76,14 @@ namespace Project {
 	private: System::Windows::Forms::Label^  LabelCurrentDotName;
 	private: System::Windows::Forms::Button^  AddPlexButton;
 	private: System::Windows::Forms::Button^  DrawPlexButton;
+	private: System::Windows::Forms::Button^  DrawPictButton;
+	private: System::Windows::Forms::Button^  ReadPlexButton;
+	private: System::Windows::Forms::Button^  ClearButton;
+	private: System::Windows::Forms::ColorDialog^  colorDialog1;
+	private: System::Windows::Forms::Button^  ColorButton;
+
+
+
 
 
 
@@ -114,6 +127,11 @@ namespace Project {
 			this->LabelCurrentDotName = (gcnew System::Windows::Forms::Label());
 			this->AddPlexButton = (gcnew System::Windows::Forms::Button());
 			this->DrawPlexButton = (gcnew System::Windows::Forms::Button());
+			this->DrawPictButton = (gcnew System::Windows::Forms::Button());
+			this->ReadPlexButton = (gcnew System::Windows::Forms::Button());
+			this->ClearButton = (gcnew System::Windows::Forms::Button());
+			this->colorDialog1 = (gcnew System::Windows::Forms::ColorDialog());
+			this->ColorButton = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->GridDots))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->GridLines))->BeginInit();
@@ -294,21 +312,66 @@ namespace Project {
 			// 
 			this->AddPlexButton->Location = System::Drawing::Point(1307, 284);
 			this->AddPlexButton->Name = L"AddPlexButton";
-			this->AddPlexButton->Size = System::Drawing::Size(99, 30);
+			this->AddPlexButton->Size = System::Drawing::Size(137, 66);
 			this->AddPlexButton->TabIndex = 19;
-			this->AddPlexButton->Text = L"Добавить плекс";
+			this->AddPlexButton->Text = L"Добавить в плекс конфигурацию на рисунке";
 			this->AddPlexButton->UseVisualStyleBackColor = true;
 			this->AddPlexButton->Click += gcnew System::EventHandler(this, &MyForm::AddPlexButton_Click);
 			// 
 			// DrawPlexButton
 			// 
-			this->DrawPlexButton->Location = System::Drawing::Point(1307, 320);
+			this->DrawPlexButton->Location = System::Drawing::Point(1307, 356);
 			this->DrawPlexButton->Name = L"DrawPlexButton";
 			this->DrawPlexButton->Size = System::Drawing::Size(137, 30);
 			this->DrawPlexButton->TabIndex = 20;
-			this->DrawPlexButton->Text = L"Нарисовать по плексу";
+			this->DrawPlexButton->Text = L"Показать плекс";
 			this->DrawPlexButton->UseVisualStyleBackColor = true;
 			this->DrawPlexButton->Click += gcnew System::EventHandler(this, &MyForm::DrawPlexButton_Click);
+			// 
+			// DrawPictButton
+			// 
+			this->DrawPictButton->Location = System::Drawing::Point(1307, 392);
+			this->DrawPictButton->Name = L"DrawPictButton";
+			this->DrawPictButton->Size = System::Drawing::Size(137, 30);
+			this->DrawPictButton->TabIndex = 21;
+			this->DrawPictButton->Text = L"Показать рисунок";
+			this->DrawPictButton->UseVisualStyleBackColor = true;
+			this->DrawPictButton->Click += gcnew System::EventHandler(this, &MyForm::DrawPictButton_Click);
+			// 
+			// ReadPlexButton
+			// 
+			this->ReadPlexButton->Location = System::Drawing::Point(1307, 428);
+			this->ReadPlexButton->Name = L"ReadPlexButton";
+			this->ReadPlexButton->Size = System::Drawing::Size(137, 38);
+			this->ReadPlexButton->TabIndex = 22;
+			this->ReadPlexButton->Text = L"Считать плекс из файла";
+			this->ReadPlexButton->UseVisualStyleBackColor = true;
+			this->ReadPlexButton->Click += gcnew System::EventHandler(this, &MyForm::ReadPlexButton_Click);
+			// 
+			// ClearButton
+			// 
+			this->ClearButton->Location = System::Drawing::Point(1307, 472);
+			this->ClearButton->Name = L"ClearButton";
+			this->ClearButton->Size = System::Drawing::Size(137, 38);
+			this->ClearButton->TabIndex = 23;
+			this->ClearButton->Text = L"Очистить всё";
+			this->ClearButton->UseVisualStyleBackColor = true;
+			this->ClearButton->Click += gcnew System::EventHandler(this, &MyForm::ClearButton_Click);
+			// 
+			// colorDialog1
+			// 
+			this->colorDialog1->AnyColor = true;
+			this->colorDialog1->ShowHelp = true;
+			// 
+			// ColorButton
+			// 
+			this->ColorButton->Location = System::Drawing::Point(1307, 516);
+			this->ColorButton->Name = L"ColorButton";
+			this->ColorButton->Size = System::Drawing::Size(137, 38);
+			this->ColorButton->TabIndex = 24;
+			this->ColorButton->Text = L"Поменять цвет";
+			this->ColorButton->UseVisualStyleBackColor = true;
+			this->ColorButton->Click += gcnew System::EventHandler(this, &MyForm::ColorButton_Click);
 			// 
 			// MyForm
 			// 
@@ -316,6 +379,10 @@ namespace Project {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::ActiveCaption;
 			this->ClientSize = System::Drawing::Size(1456, 632);
+			this->Controls->Add(this->ColorButton);
+			this->Controls->Add(this->ClearButton);
+			this->Controls->Add(this->ReadPlexButton);
+			this->Controls->Add(this->DrawPictButton);
 			this->Controls->Add(this->DrawPlexButton);
 			this->Controls->Add(this->AddPlexButton);
 			this->Controls->Add(this->LabelCurrentDotName);
@@ -353,6 +420,7 @@ namespace Project {
 		Bitmap^ Image;
 		SolidBrush^ Brush;
 		int DotName = -1;
+		int COLOR = -16777216;
 		System::Void MyForm_Load(System::Object^ sender, System::EventArgs^ e) {
 			Image = gcnew Bitmap(picture->Width, picture->Height);
 			g = Graphics::FromImage(Image);
@@ -395,6 +463,7 @@ namespace Project {
 			std::string name = GenerateNewName();
 			
 			Dots.push_back(new TPoint(X, Y, name));
+			Dots.back()->SetColor(COLOR);
 			//MessageBox::Show(System::Convert::ToString(mas.size()));
 			PrintDotsDataGrid();
 			DrawDots();
@@ -459,6 +528,7 @@ namespace Project {
 				delete g;
 				g = Graphics::FromImage(Image);
 				picture->Image = Image;
+				Dots[i]->SetColor(COLOR);
 				Dots[i]->Draw(g);
 				picture->Refresh();
 				picture->Invalidate();
@@ -470,6 +540,7 @@ namespace Project {
 				delete g;
 				g = Graphics::FromImage(Image);
 				picture->Image = Image;
+				Lines[i]->SetColor(COLOR);
 				Lines[i]->Draw(g);
 				picture->Refresh();
 				picture->Invalidate();
@@ -507,26 +578,105 @@ namespace Project {
 			DrawLines();
 			PrintLinesDataGrid();
 		}
+
 		System::Void AddPlexButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			if (!Lines.size()) return;
+			setik.clear();
 			
+			/*String^ kek = msclr::interop::marshal_as<String^>(Lines[0]->GetName());
+			MessageBox::Show(kek);*/
+
 			flex = new Plex(Lines[0]);
+			setik.insert(*((TPoint*)Lines[0]->GetLeft()));
+			setik.insert(*((TPoint*)Lines[0]->GetRight()));
+			std::queue<TLine*> q;
 			for (int i = 1; i < Lines.size(); i++) {
-				flex->addLine(Lines[i]);
+				if (setik.find(*(TPoint*)(Lines[i]->GetLeft())) != setik.end() || 
+					setik.find(*(TPoint*)(Lines[i]->GetRight())) != setik.end()) {
+					flex->addLine(Lines[i]);
+					setik.insert(*(TPoint*)(Lines[i]->GetLeft()));
+					setik.insert(*(TPoint*)(Lines[i]->GetRight()));
+				}
+				else {
+					q.push(Lines[i]);
+				}
+			}
+			int cnt = 0;
+			while (!q.empty()) {
+				if (cnt == 1e5) break;
+				cnt++;
+				TLine* cur = q.front();
+				q.pop();
+				if (setik.find(*(TPoint*)(cur->GetLeft())) != setik.end() ||
+					setik.find(*(TPoint*)(cur->GetRight())) != setik.end()) {
+					flex->addLine(cur);
+					setik.insert(*(TPoint*)(cur->GetLeft()));
+					setik.insert(*(TPoint*)(cur->GetRight()));
+				}
+				else {
+					q.push(cur);
+				}
 			}
 			flex->saveFile();
 			flex->saveGraph();
+			flex->reColor(COLOR);
 			PrintLinesDataGrid();
 		}
 		System::Void DrawPlexButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			if (flex->Empty()) return;
 			ClearPictureBox();
+			if (flex == nullptr || flex->Empty()) return;
 			delete g;
 			g = Graphics::FromImage(Image);
 			picture->Image = Image;
+			flex->reColor(COLOR);
 			flex->Draw(g);
 			picture->Refresh();
 			picture->Invalidate();
+		}
+		System::Void DrawPictButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			ClearPictureBox();
+			DrawDots();
+			DrawLines();
+		}
+		System::Void ReadPlexButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			std::string name = "outputFile.txt";
+			if (!flex) flex = new Plex();
+			flex->readFile(name);
+			auto ans = flex->getPointsAndLines();
+			Dots.clear();
+			Lines.clear();
+			Dots = ans.first;
+			Lines = ans.second;
+			if (Dots.size()) PrintDotsDataGrid();
+			if (Lines.size()) PrintLinesDataGrid();
+			DotName = Lines.size() - 1;
+			flex->reColor(COLOR);
+		}
+		System::Void ClearButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			ClearPictureBox();
+			Dots.clear();
+			Lines.clear();
+			delete flex;
+			flex = new Plex();
+			delete g;
+			g = Graphics::FromImage(Image);
+			picture->Image = Image;
+			picture->Refresh();
+			picture->Invalidate();
+		}
+		System::Void ColorButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			if (colorDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+				COLOR = colorDialog1->Color.ToArgb();
+				//MessageBox::Show(System::Convert::ToString(COLOR));
+				for (auto i : Dots) {
+					i->SetColor(COLOR);
+				}
+				for (auto i : Lines) {
+					i->SetColor(COLOR);
+				}
+				DrawPlexButton_Click(sender, e);
+				DrawPictButton_Click(sender, e);
+			}
 		}
 };
 }
